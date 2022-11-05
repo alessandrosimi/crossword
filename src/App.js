@@ -9,94 +9,6 @@ const words = {
   "transliteration": []
 }
 
-/*
-const data = {
-  id: 'simple/1',
-  number: 1,
-  name: 'Simple Crossword 1',
-  date: 1542326400000,
-  entries: [
-    {
-      id: '1-across',
-      number: 1,
-      humanNumber: '1',
-      clue: 'Toy on a string (2-2)',
-      direction: 'across',
-      length: 4,
-      group: ['1-across'],
-      position: { x: 0, y: 0 },
-      separatorLocations: {
-        '-': [2],
-      },
-      solution: 'YOYO',
-    },
-    {
-      id: '2-across',
-      number: 2,
-      humanNumber: '2',
-      clue: 'Have a rest (3,4)',
-      direction: 'across',
-      length: 7,
-      group: ['2-across'],
-      position: { x: 0, y: 2 },
-      separatorLocations: {
-        ',': [3],
-      },
-      solution: 'LIEDOWN',
-    },
-    {
-      id: '1-down',
-      number: 1,
-      humanNumber: '1',
-      clue: 'Colour (6)',
-      direction: 'down',
-      length: 6,
-      group: ['1-down'],
-      position: { x: 0, y: 0 },
-      separatorLocations: {},
-      solution: 'YELLOW',
-    },
-    {
-      id: '3-down',
-      number: 3,
-      humanNumber: '3',
-      clue: 'Bits and bobs (4,3,4)',
-      direction: 'down',
-      length: 7,
-      group: ['3-down', '4-down'],
-      position: { x: 3, y: 0 },
-      separatorLocations: {
-        ',': [4],
-      },
-      solution: 'ODDSAND',
-    },
-    {
-      id: '4-down',
-      number: 4,
-      humanNumber: '4',
-      clue: 'See 3 down',
-      direction: 'down',
-      length: 4,
-      group: ['3-down', '4-down'],
-      position: {
-        x: 6,
-        y: 1,
-      },
-      separatorLocations: {},
-      solution: 'ENDS',
-    },
-  ],
-  solutionAvailable: true,
-  dateSolutionAvailable: 1542326400000,
-  dimensions: {
-    cols: 13,
-    rows: 13,
-  },
-  crosswordType: 'quick',
-};
-
- */
-
 const grid_width = 14;
 const grid_height = 14;
 const str_language = 'italian';
@@ -113,6 +25,7 @@ class Grid {
     this.initGrid();
     this.loadData(data);
     this.createCrossword();
+    this.adjustNumbers();
   }
 
   shuffleData(data) {
@@ -133,6 +46,37 @@ class Grid {
       array[i] = array[j];
       array[j] = temp;
     }
+  }
+
+  adjustNumbers() {
+    this.data.sort((a, b) => {
+      if (a.position.y > b.position.y) return 1;
+      else if (a.position.y === b.position.y) {
+        if (a.position.x > b.position.x) return 1;
+        if (a.position.x === b.position.x) return 0;
+        else return -1;
+      }
+      else return -1;
+    });
+    let number = 0;
+    let previous = {
+      number: -1,
+      position: { x: -1, y: -1 }
+    };
+    this.data.forEach(item => {
+      let itemNumber;
+      if (item.position.x === previous.position.x && item.position.y === previous.position.y) {
+        itemNumber = previous.number;
+      } else {
+        itemNumber = ++number;
+      }
+      item.id = itemNumber + '-' + item.direction;
+      item.number = itemNumber;
+      item.humanNumber = itemNumber.toString();
+      item.group = [itemNumber + '-' + item.direction];
+      previous = item;
+    });
+    this.data.sort((a, b) => a.number > b.number ? 1 : -1);
   }
 
   initGrid() {
@@ -272,16 +216,10 @@ class Grid {
   addData(solution, x, y, direction) {
     const index = this.foreign_words.indexOf(solution)
     const clue = this.capitalizeFirstLetter(this.english_words[index]);
-    // const number = this.data.filter(item => item.direction === direction).length + 1;
-    const number = this.data.length + 1;
     this.data.push({
-      id: number + '-' + direction,
-      number: number,
-      humanNumber: number.toString(),
       clue: clue,
       direction: direction,
       length: solution.length,
-      group: [number + '-' + direction],
       position: { x: x, y: y },
       separatorLocations: {},
       solution: solution.toUpperCase(),
@@ -666,7 +604,7 @@ function App() {
     <div className="App">
       <header className="App-header center">
         <h2>Il cruciverba di Giulietta</h2>
-        <Crossword data={data} />
+        <Crossword data={data} loadGrid={() => []} />
       </header>
     </div>
   );

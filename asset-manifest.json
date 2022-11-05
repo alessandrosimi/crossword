@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/crossword/static/css/main.728a0780.css",
-    "main.js": "/crossword/static/js/main.6d73b0ef.js",
+    "main.js": "/crossword/static/js/main.417d9b95.js",
     "static/js/787.f5217329.chunk.js": "/crossword/static/js/787.f5217329.chunk.js",
     "index.html": "/crossword/index.html",
     "main.728a0780.css.map": "/crossword/static/css/main.728a0780.css.map",
-    "main.6d73b0ef.js.map": "/crossword/static/js/main.6d73b0ef.js.map",
+    "main.417d9b95.js.map": "/crossword/static/js/main.417d9b95.js.map",
     "787.f5217329.chunk.js.map": "/crossword/static/js/787.f5217329.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.728a0780.css",
-    "static/js/main.6d73b0ef.js"
+    "static/js/main.417d9b95.js"
   ]
 }
